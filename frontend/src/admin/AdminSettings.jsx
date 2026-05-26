@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   RefreshCw,
 } from "lucide-react";
+import { API_URL } from "../utils/api";
 
 export default function AdminSettings() {
   const [saveStatus, setSaveStatus] = useState("idle"); // idle | saving | saved | error
@@ -66,7 +67,7 @@ export default function AdminSettings() {
 
   // Load maintenance mode
   useEffect(() => {
-    fetch("/api/admin/settings/system")
+    fetch(`${API_URL}/api/admin/settings/system`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load system settings");
         return res.json();
@@ -82,7 +83,7 @@ export default function AdminSettings() {
 
   // Load store settings
   useEffect(() => {
-    fetch("/api/admin/settings/store")
+    fetch(`${API_URL}/api/admin/settings/store`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed to load store settings");
         return res.json();
@@ -180,7 +181,7 @@ export default function AdminSettings() {
     setMaintenanceMode(newValue);
     setMaintenanceLoading(true);
     try {
-      const res = await fetch("/api/admin/settings/system", {
+      const res = await fetch(`${API_URL}/api/admin/settings/system`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ maintenanceMode: newValue }),
@@ -212,7 +213,7 @@ export default function AdminSettings() {
     setErrorMessage("");
 
     try {
-      const res = await fetch("/api/admin/settings/store", {
+      const res = await fetch(`${API_URL}/api/admin/settings/store`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -270,7 +271,7 @@ export default function AdminSettings() {
     setLoadError(false);
     setLoadingSettings(true);
     setLoadingMaintenance(true);
-    fetch("/api/admin/settings/store")
+    fetch(`${API_URL}/api/admin/settings/store`)
       .then((res) => {
         if (!res.ok) throw new Error("Failed");
         return res.json();
@@ -297,7 +298,7 @@ export default function AdminSettings() {
         setLoadingSettings(false);
         setLoadError(true);
       });
-    fetch("/api/admin/settings/system")
+    fetch(`${API_URL}/api/admin/settings/system`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) setMaintenanceMode(data.data.maintenanceMode);

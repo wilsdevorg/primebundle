@@ -8,8 +8,7 @@ import {
   Info,
   Loader2,
 } from "lucide-react";
-
-const API_URL = "http://localhost:5000/api";
+import { API_URL } from "../utils/api";
 
 export default function Wallet() {
   const { state, dispatch } = useApp();
@@ -21,7 +20,7 @@ export default function Wallet() {
 
   useEffect(() => {
     // Fetch Paystack public key from backend
-    fetch(`${API_URL}/paystack/config`)
+    fetch(`${API_URL}/api/paystack/config`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) setPublicKey(data.data.publicKey);
@@ -48,7 +47,7 @@ export default function Wallet() {
 
   const onSuccess = async (reference) => {
     try {
-      const res = await fetch(`${API_URL}/paystack/verify`, {
+      const res = await fetch(`${API_URL}/api/paystack/verify`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -101,7 +100,7 @@ export default function Wallet() {
 
     try {
       // Get a reference from the backend
-      const res = await fetch(`${API_URL}/paystack/initialize`, {
+      const res = await fetch(`${API_URL}/api/paystack/initialize`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ amount: amt }),

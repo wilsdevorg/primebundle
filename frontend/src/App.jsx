@@ -16,14 +16,13 @@ import Reseller from "./pages/Reseller";
 import ResellerAPI from "./pages/ResellerAPI";
 import Maintenance from "./pages/Maintenance";
 import { useState, useEffect } from "react";
-import { API_URL } from "./utils/api";
 
 export default function App() {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${API_URL}/api/health`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/health`)
       .then((res) => {
         if (res.status === 503) {
           return res.json();

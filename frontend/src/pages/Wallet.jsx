@@ -8,7 +8,6 @@ import {
   Info,
   Loader2,
 } from "lucide-react";
-import { API_URL } from "../utils/api";
 
 export default function Wallet() {
   const { state, dispatch } = useApp();
@@ -20,7 +19,7 @@ export default function Wallet() {
 
   useEffect(() => {
     // Fetch Paystack public key from backend
-    fetch(`${API_URL}/api/paystack/config`)
+    fetch(`${import.meta.env.VITE_API_URL}/api/paystack/config`)
       .then((res) => res.json())
       .then((data) => {
         if (data.success) setPublicKey(data.data.publicKey);
@@ -47,13 +46,16 @@ export default function Wallet() {
 
   const onSuccess = async (reference) => {
     try {
-      const res = await fetch(`${API_URL}/api/paystack/verify`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          reference: reference.reference || reference.trxref,
-        }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/paystack/verify`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            reference: reference.reference || reference.trxref,
+          }),
+        },
+      );
       const data = await res.json();
 
       if (data.success) {
@@ -100,11 +102,14 @@ export default function Wallet() {
 
     try {
       // Get a reference from the backend
-      const res = await fetch(`${API_URL}/api/paystack/initialize`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ amount: amt }),
-      });
+      const res = await fetch(
+        `${import.meta.env.VITE_API_URL}/api/paystack/initialize`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ amount: amt }),
+        },
+      );
       const data = await res.json();
 
       if (data.success) {

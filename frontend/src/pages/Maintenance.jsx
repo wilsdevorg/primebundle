@@ -1,6 +1,5 @@
 import { AlertTriangle, Settings, RefreshCw } from "lucide-react";
 import { useState, useEffect } from "react";
-import { API_URL } from "../utils/api";
 
 export default function Maintenance({ onSystemLive }) {
   const [checking, setChecking] = useState(false);
@@ -10,7 +9,7 @@ export default function Maintenance({ onSystemLive }) {
   useEffect(() => {
     const interval = setInterval(() => {
       setChecking(true);
-      fetch(`${API_URL}/api/health`)
+      fetch(`${import.meta.env.VITE_API_URL}/api/health`)
         .then((res) => res.json())
         .then((data) => {
           setChecking(false);

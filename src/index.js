@@ -24,6 +24,10 @@ const errorHandler = require("./middleware/errorHandler");
 const maintenanceCheck = require("./middleware/maintenanceCheck");
 const { syncDB, sequelize } = require("./models");
 
+const swaggerUi = require("swagger-ui-express");
+
+const swaggerSpec = require("./docs/swagger");
+
 // ====================
 // APP INIT
 // ====================
@@ -94,6 +98,7 @@ app.use("/api/payments", paymentRoutes);
 app.use("/api/webhooks", webhookRoutes);
 
 app.use("/api", maintenanceCheck, routes);
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // ====================
 // ERROR HANDLER

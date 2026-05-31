@@ -1,17 +1,12 @@
 require("dotenv").config();
 
 const { Sequelize } = require("sequelize");
+const path = require("path");
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: "postgres",
+const sequelize = new Sequelize({
+  dialect: "sqlite",
+  storage: path.join(__dirname, "../../database.sqlite"),
   logging: false,
-
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false,
-    },
-  },
 
   pool: {
     max: 5,

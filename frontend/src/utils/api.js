@@ -1,15 +1,12 @@
 /**
- * Centralized API base URL utility for PrimeBundle frontend.
+ * PrimeBundle API base URL (production + development safe)
  *
- * - In production: uses VITE_API_URL from the environment (e.g. https://primebundle.onrender.com)
- * - In development: falls back to empty string so requests go through the Vite dev proxy
- *   (which proxies /api → http://localhost:5000)
- *
- * Usage in any component:
- *   import { API_URL } from '../utils/api';
- *   fetch(`${API_URL}/api/health`)
+ * - Production: uses VITE_API_URL (Render backend)
+ * - Development: uses Vite proxy (/api)
  */
 
-const API_URL = import.meta.env.VITE_API_URL || "";
+const isProd = import.meta.env.PROD;
+
+const API_URL = isProd ? import.meta.env.VITE_API_URL : ""; // dev uses Vite proxy
 
 export { API_URL };

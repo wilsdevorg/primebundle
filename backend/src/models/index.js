@@ -1,38 +1,42 @@
-const { sequelize, Sequelize } = require('../config/database');
+const { sequelize, Sequelize } = require("../config/database");
 
 // Import models
-const User = require('./User');
-const DataBundle = require('./DataBundle');
-const SmmService = require('./SmmService');
-const Order = require('./Order');
-const Transaction = require('./Transaction');
-const LoyaltyHistory = require('./LoyaltyHistory');
-const DailyReward = require('./DailyReward');
-const AffiliateCommission = require('./AffiliateCommission');
-const ResellerSetting = require('./ResellerSetting');
-const ApiKey = require('./ApiKey');
-const Admin = require('./Admin');
-const SystemSetting = require('./SystemSetting');
+const User = require("./User");
+const DataBundle = require("./DataBundle");
+const SmmService = require("./SmmService");
+const Order = require("./Order");
+const Transaction = require("./Transaction");
+const LoyaltyHistory = require("./LoyaltyHistory");
+const DailyReward = require("./DailyReward");
+const AffiliateCommission = require("./AffiliateCommission");
+const ResellerSetting = require("./ResellerSetting");
+const ApiKey = require("./ApiKey");
+const Admin = require("./Admin");
+const SystemSetting = require("./SystemSetting");
+const RefreshToken = require("./RefreshToken");
 
 // Sync all models
 const syncDB = async (options = {}) => {
-    await sequelize.sync(options);
+  await sequelize.sync(options);
 };
+User.hasMany(RefreshToken);
+RefreshToken.belongsTo(User);
 
 module.exports = {
-    sequelize,
-    Sequelize,
-    User,
-    DataBundle,
-    SmmService,
-    Order,
-    Transaction,
-    LoyaltyHistory,
-    DailyReward,
-    AffiliateCommission,
-    ResellerSetting,
-    ApiKey,
-    Admin,
-    SystemSetting,
-    syncDB,
+  sequelize,
+  Sequelize,
+  User,
+  DataBundle,
+  SmmService,
+  Order,
+  Transaction,
+  LoyaltyHistory,
+  DailyReward,
+  AffiliateCommission,
+  ResellerSetting,
+  ApiKey,
+  Admin,
+  SystemSetting,
+  syncDB,
+  RefreshToken,
 };

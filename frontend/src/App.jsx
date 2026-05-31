@@ -16,27 +16,30 @@ import Reseller from "./pages/Reseller";
 import ResellerAPI from "./pages/ResellerAPI";
 import Maintenance from "./pages/Maintenance";
 import { useState, useEffect } from "react";
+import api from "./api/client";
 
 export default function App() {
   const [maintenanceMode, setMaintenanceMode] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/health`)
+    api
+      .get("/health")
       .then((res) => {
-        if (res.status === 503) {
-          return res.json();
-        }
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
-      .then((data) => {
-        if (data && data.maintenanceMode) {
+        if (res.data && res.data.maintenanceMode) {
           setMaintenanceMode(true);
         }
         setLoading(false);
       })
       .catch((err) => {
+        if (
+          err.response &&
+          err.response.status === 503 &&
+          err.response.data &&
+          err.response.data.maintenanceMode
+        ) {
+          setMaintenanceMode(true);
+        }
         console.error(err);
         setLoading(false);
       });

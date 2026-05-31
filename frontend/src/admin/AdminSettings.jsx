@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import api from "../api/client";
 import {
   Save,
   Globe,
@@ -66,13 +67,10 @@ export default function AdminSettings() {
 
   // Load maintenance mode
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/admin/settings/system`)
+    api
+      .get("/admin/settings/system")
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to load system settings");
-        return res.json();
-      })
-      .then((data) => {
-        if (data.success) setMaintenanceMode(data.data.maintenanceMode);
+        if (res.data.success) setMaintenanceMode(res.data.data.maintenanceMode);
         setLoadingMaintenance(false);
       })
       .catch(() => {
@@ -82,14 +80,11 @@ export default function AdminSettings() {
 
   // Load store settings
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/admin/settings/store`)
+    api
+      .get("/admin/settings/store")
       .then((res) => {
-        if (!res.ok) throw new Error("Failed to load store settings");
-        return res.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          const d = data.data;
+        if (res.data.success) {
+          const d = res.data.data;
           setStoreName(d.storeName || "");
           setStoreUrl(d.storeUrl || "");
           setCurrency(d.currency || "GHS (₵)");
@@ -180,15 +175,7 @@ export default function AdminSettings() {
     setMaintenanceMode(newValue);
     setMaintenanceLoading(true);
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/settings/system`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ maintenanceMode: newValue }),
-        },
-      );
-      if (!res.ok) throw new Error("Failed to update");
+      await api.put("/admin/settings/system", { maintenanceMode: newValue });
     } catch (error) {
       console.error("Failed to toggle maintenance mode", error);
       setMaintenanceMode(!newValue); // revert on error
@@ -215,25 +202,16 @@ export default function AdminSettings() {
     setErrorMessage("");
 
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/admin/settings/store`,
-        {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            storeName,
-            storeUrl,
-            currency,
-            adminEmail,
-            password,
-            notifications,
-          }),
-        },
-      );
+      const { data } = await api.put("/admin/settings/store", {
+        storeName,
+        storeUrl,
+        currency,
+        adminEmail,
+        password,
+        notifications,
+      });
 
-      const data = await res.json();
-
-      if (res.ok && data.success) {
+      if (data.success) {
         setSaveStatus("saved");
         setPassword("");
         setOriginal({
@@ -276,14 +254,11 @@ export default function AdminSettings() {
     setLoadError(false);
     setLoadingSettings(true);
     setLoadingMaintenance(true);
-    fetch(`${import.meta.env.VITE_API_URL}/api/admin/settings/store`)
+    api
+      .get("/admin/settings/store")
       .then((res) => {
-        if (!res.ok) throw new Error("Failed");
-        return res.json();
-      })
-      .then((data) => {
-        if (data.success) {
-          const d = data.data;
+        if (res.data.success) {
+          const d = res.data.data;
           setStoreName(d.storeName || "");
           setStoreUrl(d.storeUrl || "");
           setCurrency(d.currency || "GHS (₵)");
@@ -303,10 +278,10 @@ export default function AdminSettings() {
         setLoadingSettings(false);
         setLoadError(true);
       });
-    fetch(`${import.meta.env.VITE_API_URL}/api/admin/settings/system`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setMaintenanceMode(data.data.maintenanceMode);
+    api
+      .get("/admin/settings/system")
+      .then((res) => {
+        if (res.data.success) setMaintenanceMode(res.data.data.maintenanceMode);
         setLoadingMaintenance(false);
       })
       .catch(() => setLoadingMaintenance(false));

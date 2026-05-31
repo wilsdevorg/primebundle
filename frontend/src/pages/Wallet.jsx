@@ -8,6 +8,7 @@ import {
   Info,
   Loader2,
 } from "lucide-react";
+import api from "../api/client";
 
 export default function Wallet() {
   const { state, dispatch } = useApp();
@@ -19,10 +20,10 @@ export default function Wallet() {
 
   useEffect(() => {
     // Fetch Paystack public key from backend
-    fetch(`${import.meta.env.VITE_API_URL}/api/paystack/config`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) setPublicKey(data.data.publicKey);
+    api
+      .get("/paystack/config")
+      .then((res) => {
+        if (res.data.success) setPublicKey(res.data.data.publicKey);
       })
       .catch((err) => console.error("Failed to load Paystack config:", err));
   }, []);
@@ -46,17 +47,9 @@ export default function Wallet() {
 
   const onSuccess = async (reference) => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/paystack/verify`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            reference: reference.reference || reference.trxref,
-          }),
-        },
-      );
-      const data = await res.json();
+      const { data } = await api.post("/paystack/verify", {
+        reference: reference.reference || reference.trxref,
+      });
 
       if (data.success) {
         dispatch({
@@ -102,15 +95,9 @@ export default function Wallet() {
 
     try {
       // Get a reference from the backend
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/paystack/initialize`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ amount: amt }),
-        },
-      );
-      const data = await res.json();
+      const { data } = await api.post("/paystack/initialize", {
+        amount: amt,
+      });
 
       if (data.success) {
         // Update config reference and trigger Paystack popup

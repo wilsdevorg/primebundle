@@ -15,6 +15,7 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import { useState, useEffect } from "react";
+import api from "../api/client";
 
 const adminNavItems = [
   { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
@@ -33,11 +34,11 @@ export default function AdminLayout() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/api/admin/settings/system`)
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.success) {
-          setMaintenanceMode(data.data.maintenanceMode);
+    api
+      .get("/admin/settings/system")
+      .then((res) => {
+        if (res.data.success) {
+          setMaintenanceMode(res.data.data.maintenanceMode);
         }
       })
       .catch(console.error);

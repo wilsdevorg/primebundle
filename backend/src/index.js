@@ -25,7 +25,6 @@ const maintenanceCheck = require("./middleware/maintenanceCheck");
 const { syncDB, sequelize } = require("./models");
 
 const swaggerUi = require("swagger-ui-express");
-
 const swaggerSpec = require("./docs/swagger");
 
 // ====================
@@ -46,15 +45,35 @@ app.use(
 );
 
 // ====================
-// SECURITY + BASIC MIDDLEWARE
+// CORS CONFIGURATION
 // ====================
+const allowedOrigins = [
+  "https://primebundle.vercel.app",
+  "http://localhost:5173",
+];
+
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL || "*",
+    origin: (origin, callback) => {
+      // Allow Postman, server-to-server requests, etc.
+      if (!origin) {
+        return callback(null, true);
+      }
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.error(`❌ Blocked by CORS: ${origin}`);
+      return callback(new Error("Not allowed by CORS"));
+    },
     credentials: true,
   }),
 );
 
+// ====================
+// SECURITY + BASIC MIDDLEWARE
+// ====================
 app.use(helmet());
 app.use(morgan("dev"));
 app.use(express.urlencoded({ extended: true }));
@@ -90,8 +109,17 @@ app.get("/api/test", (req, res) => {
   });
 });
 
+// Health Check Route
+app.get("/api/health", (req, res) => {
+  res.json({
+    success: true,
+    status: "healthy",
+    timestamp: new Date().toISOString(),
+  });
+});
+
 // ====================
-// ROUTE REGISTRATION (IMPORTANT FIX)
+// ROUTES
 // ====================
 app.use("/api/auth", authRoutes);
 app.use("/api/payments", paymentRoutes);
@@ -121,11 +149,12 @@ const start = async () => {
     app.listen(PORT, () => {
       console.log("\n🚀 Server running");
       console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
-      console.log(`📡 Base URL: http://localhost:${PORT}`);
-      console.log(`🧪 Test: http://localhost:${PORT}/api/test`);
-      console.log(`🔐 Auth: http://localhost:${PORT}/api/auth`);
-      console.log(`💳 Payments: http://localhost:${PORT}/api/payments`);
-      console.log(`🌐 Webhooks: http://localhost:${PORT}/api/webhooks`);
+      console.log(`📡 Port: ${PORT}`);
+      console.log(`🧪 Test: /api/test`);
+      console.log(`❤️ Health: /api/health`);
+      console.log(`🔐 Auth: /api/auth`);
+      console.log(`💳 Payments: /api/payments`);
+      console.log(`🌐 Webhooks: /api/webhooks`);
       console.log("");
     });
   } catch (error) {

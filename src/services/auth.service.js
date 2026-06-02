@@ -3,143 +3,159 @@ const bcrypt = require("bcryptjs");
 const { User } = require("../models");
 
 class AuthService {
-  // =========================
-  // REGISTER USER
-  // =========================
-  static async register({ name, phone, password }) {
-    const existing = await User.findOne({ where: { phone } });
+// =========================
+// REGISTER USER
+// =========================
+static async register({ name, phone, password }) {
+const existing = await User.findOne({
+where: { phone },
+});
 
-    if (existing) {
-      throw new Error("User already exists");
-    }
+```
+if (existing) {
+  throw new Error("User already exists");
+}
 
-    const hashedPassword = await bcrypt.hash(password, 12); // 🔥 stronger hashing
+const hashedPassword = await bcrypt.hash(password, 12);
 
-    const user = await User.create({
-      name,
-      phone,
-      password: hashedPassword,
-      userId: "USR-" + Date.now(),
-      role: "user",
-      tokenVersion: 0,
-      joinDate: new Date().toISOString(),
-    });
+const user = await User.create({
+  name,
+  phone,
+  password: hashedPassword,
+  userId: `USR-${Date.now()}`,
+  role: "user",
+  tokenVersion: 0,
+  walletBalance: 0,
+  loyaltyPoints: 0,
+});
 
-    return this.sanitizeUser(user);
-  }
+return this.sanitizeUser(user);
+```
 
-  // =========================
-  // LOGIN USER
-  // =========================
-  static async login({ phone, password }) {
-    const user = await User.findOne({ where: { phone } });
+}
 
-    if (!user) {
-      throw new Error("Invalid credentials");
-    }
+// =========================
+// LOGIN USER
+// =========================
+static async login({ phone, password }) {
+const user = await User.findOne({
+where: { phone },
+});
 
-    const isMatch = await bcrypt.compare(password, user.password);
+```
+if (!user) {
+  throw new Error("Invalid credentials");
+}
 
-    if (!isMatch) {
-      throw new Error("Invalid credentials");
-    }
+const isMatch = await bcrypt.compare(password, user.password);
 
-    const token = this.signToken(user);
+if (!isMatch) {
+  throw new Error("Invalid credentials");
+}
 
-    return {
-      user: this.sanitizeUser(user),
-      token,
-    };
-  }
+const token = this.signToken(user);
 
-  // =========================
-  // SIGN JWT TOKEN (HARDENED)
-  // =========================
-  static signToken(user) {
-    return jwt.sign(
-      {
-        id: user.id,
-        email: user.email,
-        role: user.role,
-        tokenVersion: user.tokenVersion || 0,
-      },
-      process.env.JWT_SECRET,
-      {
-        algorithm: "HS256",
-        expiresIn: "15m",
-        issuer: "primebundle-api",
-        audience: "primebundle-client",
-      },
-    );
-  }
+return {
+  user: this.sanitizeUser(user),
+  token,
+};
+```
 
-  // =========================
-  // VERIFY TOKEN
-  // =========================
-  static verifyToken(token) {
-    try {
-      return jwt.verify(token, process.env.JWT_SECRET, {
-        algorithms: ["HS256"],
-        issuer: "primebundle-api",
-        audience: "primebundle-client",
-      });
-    } catch (err) {
-      throw new Error("Invalid or expired token");
-    }
-  }
+}
 
-  // =========================
-  // GET USER FROM TOKEN
-  // =========================
-  static async getUserFromToken(token) {
-    const decoded = this.verifyToken(token);
+// =========================
+// SIGN JWT TOKEN
+// =========================
+static signToken(user) {
+return jwt.sign(
+{
+id: user.id,
+role: user.role,
+tokenVersion: user.tokenVersion || 0,
+},
+process.env.JWT_SECRET,
+{
+algorithm: "HS256",
+expiresIn: process.env.JWT_EXPIRES_IN || "15m",
+issuer: "primebundle-api",
+audience: "primebundle-client",
+}
+);
+}
 
-    const user = await User.findByPk(decoded.id);
+// =========================
+// VERIFY TOKEN
+// =========================
+static verifyToken(token) {
+try {
+return jwt.verify(token, process.env.JWT_SECRET, {
+algorithms: ["HS256"],
+issuer: "primebundle-api",
+audience: "primebundle-client",
+});
+} catch (error) {
+throw new Error("Invalid or expired token");
+}
+}
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+// =========================
+// GET USER FROM TOKEN
+// =========================
+static async getUserFromToken(token) {
+const decoded = this.verifyToken(token);
 
-    // 🔥 token version check (prevents reused tokens after logout-all)
-    if (user.tokenVersion !== decoded.tokenVersion) {
-      throw new Error("Token expired (session invalidated)");
-    }
+```
+const user = await User.findByPk(decoded.id);
 
-    return this.sanitizeUser(user);
-  }
+if (!user) {
+  throw new Error("User not found");
+}
 
-  // =========================
-  // SANITIZE USER OUTPUT
-  // =========================
-  static sanitizeUser(user) {
-    return {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      phone: user.phone,
-      role: user.role,
-      userId: user.userId,
-      walletBalance: user.walletBalance,
-      loyaltyPoints: user.loyaltyPoints,
-      createdAt: user.createdAt,
-    };
-  }
+if ((user.tokenVersion || 0) !== (decoded.tokenVersion || 0)) {
+  throw new Error("Token expired (session invalidated)");
+}
 
-  // =========================
-  // FORCE LOGOUT ALL SESSIONS
-  // =========================
-  static async revokeTokens(userId) {
-    const user = await User.findByPk(userId);
+return this.sanitizeUser(user);
+```
 
-    if (!user) {
-      throw new Error("User not found");
-    }
+}
 
-    user.tokenVersion += 1; // 🔥 invalidates all old tokens
-    await user.save();
+// =========================
+// SANITIZE USER
+// =========================
+static sanitizeUser(user) {
+return {
+id: user.id,
+name: user.name,
+email: user.email || null,
+phone: user.phone,
+role: user.role,
+userId: user.userId,
+walletBalance: user.walletBalance || 0,
+loyaltyPoints: user.loyaltyPoints || 0,
+createdAt: user.createdAt,
+};
+}
 
-    return true;
-  }
+// =========================
+// REVOKE TOKENS
+// =========================
+static async revokeTokens(userId) {
+const user = await User.findByPk(userId);
+
+```
+if (!user) {
+  throw new Error("User not found");
+}
+
+user.tokenVersion = (user.tokenVersion || 0) + 1;
+
+await user.save();
+
+return true;
+```
+
+}
 }
 
 module.exports = AuthService;

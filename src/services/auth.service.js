@@ -6,8 +6,8 @@ class AuthService {
   // =========================
   // REGISTER USER
   // =========================
-  static async register({ name, email, password, phone }) {
-    const existing = await User.findOne({ where: { email } });
+  static async register({ name, phone, password }) {
+    const existing = await User.findOne({ where: { phone } });
 
     if (existing) {
       throw new Error("User already exists");
@@ -32,8 +32,8 @@ class AuthService {
   // =========================
   // LOGIN USER
   // =========================
-  static async login({ email, password }) {
-    const user = await User.findOne({ where: { email } });
+  static async login({ phone, password }) {
+    const user = await User.findOne({ where: { phone } });
 
     if (!user) {
       throw new Error("Invalid credentials");
@@ -62,11 +62,12 @@ class AuthService {
         id: user.id,
         email: user.email,
         role: user.role,
-        tokenVersion: user.tokenVersion || 0, // 🔥 security control
+        tokenVersion: user.tokenVersion || 0,
       },
       process.env.JWT_SECRET,
       {
-        expiresIn: "7d",
+        algorithm: "HS256",
+        expiresIn: "15m",
         issuer: "primebundle-api",
         audience: "primebundle-client",
       },
@@ -79,6 +80,7 @@ class AuthService {
   static verifyToken(token) {
     try {
       return jwt.verify(token, process.env.JWT_SECRET, {
+        algorithms: ["HS256"],
         issuer: "primebundle-api",
         audience: "primebundle-client",
       });

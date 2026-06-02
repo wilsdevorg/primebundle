@@ -20,8 +20,11 @@ const User = sequelize.define("User", {
     unique: true,
   },
 
-  phone: Sequelize.STRING,
-  avatar: Sequelize.STRING,
+  phone: {
+  type: Sequelize.STRING,
+  unique: true,
+  allowNull: false,
+  },
 
   // =========================
   // AUTH SYSTEM (IMPORTANT ADD)

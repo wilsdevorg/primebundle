@@ -7,12 +7,17 @@ const userController = require("../controllers/user.controller");
 // ====================
 // CURRENT USER PROFILE
 // ====================
-router.get("/profile", authMiddleware, userController.getProfile);
+// router.get("/profile", authMiddleware, userController.getProfile);
 
 // ====================
 // GET ALL USERS
 // ====================
 // (optional: later you can protect with adminMiddleware)
-router.get("/", userController.getAllUsers);
+router.get(
+  "/",
+  authMiddleware,
+  require("../middleware/adminMiddleware"),
+  userController.getAllUsers
+);
 
 module.exports = router;

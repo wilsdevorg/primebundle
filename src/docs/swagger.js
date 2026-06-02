@@ -14,7 +14,7 @@ const options = {
       {
         url:
           process.env.NODE_ENV === "production"
-            ? "https://your-render-url.onrender.com/api"
+            ? "https://primebundle-api.onrender.com"
             : "http://localhost:5000/api",
       },
     ],

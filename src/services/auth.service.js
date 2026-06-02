@@ -17,12 +17,11 @@ class AuthService {
 
     const user = await User.create({
       name,
-      email,
       phone,
       password: hashedPassword,
       userId: "USR-" + Date.now(),
       role: "user",
-      tokenVersion: 0, // 🔥 enables forced logout later
+      tokenVersion: 0,
       joinDate: new Date().toISOString(),
     });
 

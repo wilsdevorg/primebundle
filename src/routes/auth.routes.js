@@ -11,19 +11,100 @@ const {
   refreshLimiter,
 } = require("../middleware/rateLimiter");
 
-// ==============================
-// REGISTER USER
-// ==============================
+/**
+ * @swagger
+ * tags:
+ *   name: Authentication
+ *   description: Authentication APIs
+ */
+
+/**
+ * @swagger
+ * /auth/register:
+ *   post:
+ *     summary: Register a new user
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - name
+ *               - phone
+ *               - password
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 example: John Doe
+ *               phone:
+ *                 type: string
+ *                 example: 0551234567
+ *               password:
+ *                 type: string
+ *                 example: Password123
+ *     responses:
+ *       201:
+ *         description: User registered successfully
+ *       400:
+ *         description: Validation error
+ */
 router.post("/register", registerLimiter, authController.register);
 
-// ==============================
-// LOGIN USER
-// ==============================
+/**
+ * @swagger
+ * /auth/login:
+ *   post:
+ *     summary: Login user
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - phone
+ *               - password
+ *             properties:
+ *               phone:
+ *                 type: string
+ *                 example: 0551234567
+ *               password:
+ *                 type: string
+ *                 example: Password123
+ *     responses:
+ *       200:
+ *         description: Login successful
+ *       401:
+ *         description: Invalid credentials
+ */
 router.post("/login", loginLimiter, authController.login);
 
-// ==============================
-// REFRESH ACCESS TOKEN
-// ==============================
+/**
+ * @swagger
+ * /auth/refresh:
+ *   post:
+ *     summary: Refresh access token
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: New access token generated
+ *       401:
+ *         description: Invalid refresh token
+ */
 router.post("/refresh", refreshLimiter, async (req, res) => {
   try {
     const { refreshToken } = req.body;
@@ -64,9 +145,29 @@ router.post("/refresh", refreshLimiter, async (req, res) => {
   }
 });
 
-// ==============================
-// LOGOUT USER
-// ==============================
+/**
+ * @swagger
+ * /auth/logout:
+ *   post:
+ *     summary: Logout user
+ *     tags: [Authentication]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - refreshToken
+ *             properties:
+ *               refreshToken:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Logout successful
+ *       400:
+ *         description: Refresh token required
+ */
 router.post("/logout", async (req, res) => {
   try {
     const { refreshToken } = req.body;

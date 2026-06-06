@@ -1,6 +1,8 @@
 const { sequelize, Sequelize } = require("../config/database");
 
-// Import models
+// =====================
+// IMPORT MODELS
+// =====================
 const User = require("./User");
 const DataBundle = require("./DataBundle");
 const SmmService = require("./SmmService");
@@ -15,13 +17,45 @@ const Admin = require("./Admin");
 const SystemSetting = require("./SystemSetting");
 const RefreshToken = require("./RefreshToken");
 
-// Sync all models
-const syncDB = async (options = {}) => {
-  await sequelize.sync(options);
-};
+// =====================
+// ASSOCIATIONS
+// =====================
 User.hasMany(RefreshToken);
 RefreshToken.belongsTo(User);
 
+// =====================
+// DB SYNC (NEON SAFE)
+// =====================
+const syncDB = async (options = {}) => {
+  try {
+    console.log("⏳ Checking database connection...");
+
+    // 🔥 HARD FAIL FAST (prevents silent hangs)
+    await sequelize.authenticate({
+      timeout: 10000,
+    });
+
+    console.log("✅ DB authentication successful");
+
+    // 🔥 SAFE SYNC MODE
+    await sequelize.sync({
+      alter: false,
+      logging: false,
+      ...options,
+    });
+
+    console.log("✅ DB sync completed");
+  } catch (error) {
+    console.error("❌ DB sync failed:", error.message);
+
+    // 🔥 IMPORTANT: crash early instead of hanging app
+    throw error;
+  }
+};
+
+// =====================
+// EXPORTS
+// =====================
 module.exports = {
   sequelize,
   Sequelize,
@@ -37,6 +71,6 @@ module.exports = {
   ApiKey,
   Admin,
   SystemSetting,
-  syncDB,
   RefreshToken,
+  syncDB,
 };

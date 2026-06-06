@@ -4,6 +4,7 @@ const helmet = require("helmet");
 const morgan = require("morgan");
 const rateLimit = require("express-rate-limit");
 const path = require("path");
+const checkDB = require("./config/db-check");
 
 // ====================
 // ENV
@@ -25,7 +26,6 @@ const maintenanceCheck = require("./middleware/maintenanceCheck");
 const { syncDB, sequelize } = require("./models");
 
 const swaggerUi = require("swagger-ui-express");
-
 const swaggerSpec = require("./docs/swagger");
 
 // ====================
@@ -46,7 +46,7 @@ app.use(
 );
 
 // ====================
-// SECURITY + BASIC MIDDLEWARE
+// SECURITY + MIDDLEWARE
 // ====================
 app.use(
   cors({
@@ -91,7 +91,7 @@ app.get("/api/test", (req, res) => {
 });
 
 // ====================
-// ROUTE REGISTRATION (IMPORTANT FIX)
+// ROUTES
 // ====================
 app.use("/api/auth", authRoutes);
 app.use("/api/payments", paymentRoutes);
@@ -108,15 +108,25 @@ app.use(errorHandler);
 // ====================
 // START SERVER
 // ====================
+// ====================
+// DB BOOTSTRAP
+// ====================
 const start = async () => {
   try {
     console.log("\n⏳ Connecting to database...");
+
+    // timeout guard
+    const timeout = setTimeout(() => {
+      console.log("⚠️ DB connection still pending after 15s");
+    }, 15000);
 
     await sequelize.authenticate();
     console.log("✅ Database connected");
 
     await syncDB();
     console.log("✅ Database synced");
+
+    clearTimeout(timeout);
 
     app.listen(PORT, () => {
       console.log("\n🚀 Server running");

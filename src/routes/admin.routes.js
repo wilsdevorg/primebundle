@@ -6,6 +6,32 @@ const adminMiddleware = require("../middleware/adminMiddleware");
 
 const { User, Order, Transaction } = require("../models");
 
+/**
+ * @swagger
+ * tags:
+ *   name: Admin
+ *   description: Admin management APIs
+ */
+
+/**
+ * @swagger
+ * /admin/users:
+ *   get:
+ *     summary: Get all users
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Users retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
+ *       500:
+ *         description: Internal server error
+ */
+
 // ==============================
 // GET ALL USERS
 // ADMIN ONLY
@@ -26,6 +52,25 @@ router.get("/users", adminMiddleware, async (req, res, next) => {
   }
 });
 
+/**
+ * @swagger
+ * /admin/orders:
+ *   get:
+ *     summary: Get all orders
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Orders retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
+ *       500:
+ *         description: Internal server error
+ */
+
 // ==============================
 // GET ALL ORDERS
 // ADMIN ONLY
@@ -45,6 +90,25 @@ router.get("/orders", adminMiddleware, async (req, res, next) => {
     next(err);
   }
 });
+
+/**
+ * @swagger
+ * /admin/transactions:
+ *   get:
+ *     summary: Get all transactions
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Transactions retrieved successfully
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin access required
+ *       500:
+ *         description: Internal server error
+ */
 
 // ==============================
 // GET ALL TRANSACTIONS

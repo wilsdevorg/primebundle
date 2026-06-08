@@ -29,6 +29,7 @@ class WalletService {
       await Transaction.create(
         {
           UserId: user.id,
+          txnId: `TXN-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
           type: "credit",
           amount,
           description,
@@ -76,6 +77,7 @@ class WalletService {
       await Transaction.create(
         {
           UserId: user.id,
+          txnId: `TXN-${Date.now()}-${Math.floor(Math.random() * 10000)}`,
           type: "debit",
           amount: -Math.abs(amount),
           description,

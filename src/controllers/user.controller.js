@@ -1,10 +1,10 @@
 const UserService = require("../services/user.service");
 
-exports.getAllUsers = async (req, res, next) => {
+const getAllUsers = async (req, res, next) => {
   try {
     const users = await UserService.getAllUsers();
 
-    res.json({
+    return res.json({
       success: true,
       data: users,
     });
@@ -13,9 +13,14 @@ exports.getAllUsers = async (req, res, next) => {
   }
 };
 
-exports.getProfile = async (req, res) => {
-  res.json({
+const getProfile = async (req, res) => {
+  return res.json({
     success: true,
     data: req.user,
   });
+};
+
+module.exports = {
+  getAllUsers,
+  getProfile,
 };

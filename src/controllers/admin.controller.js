@@ -30,7 +30,7 @@ exports.getStats = async (req, res, next) => {
   try {
     const stats = await AdminService.getStats();
 
-    res.json({
+    return res.status(200).json({
       success: true,
       data: stats,
     });

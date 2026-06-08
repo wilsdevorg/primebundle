@@ -15,15 +15,10 @@ const User = sequelize.define("User", {
 
   name: Sequelize.STRING,
 
-  email: {
+  phone: {
     type: Sequelize.STRING,
     unique: true,
-  },
-
-  phone: {
-  type: Sequelize.STRING,
-  unique: true,
-  allowNull: false,
+    allowNull: false,
   },
 
   // =========================

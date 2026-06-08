@@ -9,9 +9,11 @@ const checkDB = require("./config/db-check");
 // ====================
 // ENV
 // ====================
-require("dotenv").config({
-  path: path.resolve(__dirname, "../.env"),
-});
+require("dotenv").config();
+
+const env = process.env.NODE_ENV || "development";
+
+console.log("🌍 Environment:", env);
 
 // ====================
 // IMPORTS
@@ -117,8 +119,8 @@ const start = async () => {
 
     // timeout guard
     const timeout = setTimeout(() => {
-      console.log("⚠️ DB connection still pending after 15s");
-    }, 15000);
+      console.log("⚠️ DB connection still pending after 10s");
+    }, 10000);
 
     await sequelize.authenticate();
     console.log("✅ Database connected");

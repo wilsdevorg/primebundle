@@ -23,6 +23,13 @@ const RefreshToken = require("./RefreshToken");
 User.hasMany(RefreshToken);
 RefreshToken.belongsTo(User);
 
+User.hasMany(Transaction, {
+  foreignKey: "UserId",
+});
+
+Transaction.belongsTo(User, {
+  foreignKey: "UserId",
+});
 // =====================
 // DB SYNC (NEON SAFE)
 // =====================

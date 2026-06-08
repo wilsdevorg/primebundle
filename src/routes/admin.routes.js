@@ -3,6 +3,7 @@ const express = require("express");
 const router = express.Router();
 
 const adminMiddleware = require("../middleware/adminMiddleware");
+const adminController = require("../controllers/admin.controller");
 
 const { User, Order, Transaction } = require("../models");
 
@@ -114,9 +115,16 @@ router.get("/orders", adminMiddleware, async (req, res, next) => {
 // GET ALL TRANSACTIONS
 // ADMIN ONLY
 // ==============================
+
 router.get("/transactions", adminMiddleware, async (req, res, next) => {
   try {
     const transactions = await Transaction.findAll({
+      include: [
+        {
+          model: User,
+          attributes: ["id", "name", "phone", "role"],
+        },
+      ],
       order: [["id", "DESC"]],
     });
 
@@ -129,5 +137,5 @@ router.get("/transactions", adminMiddleware, async (req, res, next) => {
     next(err);
   }
 });
-
+router.get("/stats", adminMiddleware, adminController.getStats);
 module.exports = router;

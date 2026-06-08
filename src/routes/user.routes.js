@@ -13,27 +13,18 @@ const userController = require("../controllers/user.controller");
 
 /**
  * @swagger
- * /users:
+ * /users/stats:
  *   get:
- *     summary: Get all users
+ *     summary: Get users stats
  *     tags: [Users]
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: List of users returned successfully
+ *         description: Success
  *       401:
  *         description: Unauthorized
- *       403:
- *         description: Admin access required
- *       500:
- *         description: Internal server error
  */
-router.get(
-  "/",
-  authMiddleware,
-  require("../middleware/adminMiddleware"),
-  userController.getAllUsers,
-);
+router.get("/stats", authMiddleware, userController.getAllUsers);
 
 module.exports = router;

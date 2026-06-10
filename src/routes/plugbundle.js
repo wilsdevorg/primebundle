@@ -12,14 +12,6 @@ const api = axios.create({
   },
 });
 
-router.get("/test", (req, res) => {
-  res.json({
-    success: true,
-    baseUrl: process.env.PLUGBUNDLE_BASE_URL,
-    hasApiKey: !!process.env.PLUGBUNDLE_API_KEY,
-  });
-});
-
 // Get reseller profile
 router.get("/profile", async (req, res) => {
   try {

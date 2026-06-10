@@ -11,7 +11,12 @@ const api = axios.create({
     "Content-Type": "application/json",
   },
 });
-
+router.get("/test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Plugbundle routes working",
+  });
+});
 // Get reseller profile
 router.get("/profile", async (req, res) => {
   try {

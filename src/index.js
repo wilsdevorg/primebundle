@@ -22,7 +22,6 @@ const routes = require("./routes");
 const authRoutes = require("./routes/auth.routes");
 const paymentRoutes = require("./routes/payment.routes");
 const webhookRoutes = require("./routes/webhook.routes");
-const plugbundleRoutes = require("./routes/plugbundle");
 const errorHandler = require("./middleware/errorHandler");
 const maintenanceCheck = require("./middleware/maintenanceCheck");
 const plugbundleRoutes = require("./routes/plugbundle");

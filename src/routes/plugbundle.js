@@ -15,7 +15,8 @@ const api = axios.create({
 router.get("/test", (req, res) => {
   res.json({
     success: true,
-    message: "Plugbundle routes working",
+    baseUrl: process.env.PLUGBUNDLE_BASE_URL,
+    hasApiKey: !!process.env.PLUGBUNDLE_API_KEY,
   });
 });
 

@@ -22,9 +22,10 @@ const routes = require("./routes");
 const authRoutes = require("./routes/auth.routes");
 const paymentRoutes = require("./routes/payment.routes");
 const webhookRoutes = require("./routes/webhook.routes");
-
+const plugbundleRoutes = require("./routes/plugbundle");
 const errorHandler = require("./middleware/errorHandler");
 const maintenanceCheck = require("./middleware/maintenanceCheck");
+const plugbundleRoutes = require("./routes/plugbundle");
 const { syncDB, sequelize } = require("./models");
 
 const swaggerUi = require("swagger-ui-express");
@@ -98,11 +99,11 @@ app.get("/api/test", (req, res) => {
 app.use("/api/auth", authRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/webhooks", webhookRoutes);
-
+app.use("/api/plugbundle", plugbundleRoutes);
 app.use("/api", maintenanceCheck, routes);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// ====================
+// ====================i
 // ERROR HANDLER
 // ====================
 app.use(errorHandler);

@@ -6,8 +6,8 @@ const webhookController = require("../controllers/webhook.controller");
 /**
  * @swagger
  * tags:
- *   name: Webhooks
- *   description: External service webhook endpoints
+ *   - name: Webhooks
+ *     description: External webhook endpoints
  */
 
 /**
@@ -16,7 +16,8 @@ const webhookController = require("../controllers/webhook.controller");
  *   post:
  *     summary: Paystack webhook callback
  *     description: Receives payment event notifications from Paystack.
- *     tags: [Webhooks]
+ *     tags:
+ *       - Webhooks
  *     requestBody:
  *       required: false
  *       content:

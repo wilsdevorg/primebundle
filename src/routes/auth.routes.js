@@ -14,8 +14,8 @@ const {
 /**
  * @swagger
  * tags:
- *   name: Authentication
- *   description: Authentication APIs
+ *   - name: Authentication
+ *     description: Authentication APIs
  */
 
 /**
@@ -23,7 +23,8 @@ const {
  * /auth/register:
  *   post:
  *     summary: Register a new user
- *     tags: [Authentication]
+ *     tags:
+ *       - Authentication
  *     requestBody:
  *       required: true
  *       content:
@@ -40,7 +41,7 @@ const {
  *                 example: John Doe
  *               phone:
  *                 type: string
- *                 example: 0551234567
+ *                 example: "0551234567"
  *               password:
  *                 type: string
  *                 example: Password123
@@ -57,7 +58,8 @@ router.post("/register", registerLimiter, authController.register);
  * /auth/login:
  *   post:
  *     summary: Login user
- *     tags: [Authentication]
+ *     tags:
+ *       - Authentication
  *     requestBody:
  *       required: true
  *       content:
@@ -70,7 +72,7 @@ router.post("/register", registerLimiter, authController.register);
  *             properties:
  *               phone:
  *                 type: string
- *                 example: 0551234567
+ *                 example: "0551234567"
  *               password:
  *                 type: string
  *                 example: Password123
@@ -87,7 +89,8 @@ router.post("/login", loginLimiter, authController.login);
  * /auth/refresh:
  *   post:
  *     summary: Refresh access token
- *     tags: [Authentication]
+ *     tags:
+ *       - Authentication
  *     requestBody:
  *       required: true
  *       content:
@@ -99,6 +102,7 @@ router.post("/login", loginLimiter, authController.login);
  *             properties:
  *               refreshToken:
  *                 type: string
+ *                 example: your-refresh-token
  *     responses:
  *       200:
  *         description: New access token generated
@@ -117,7 +121,6 @@ router.post("/refresh", refreshLimiter, async (req, res) => {
     }
 
     const stored = await TokenService.verifyRefreshToken(refreshToken);
-
     const user = await User.findByPk(stored.UserId);
 
     if (!user) {
@@ -129,7 +132,7 @@ router.post("/refresh", refreshLimiter, async (req, res) => {
 
     const accessToken = TokenService.generateAccessToken(user);
 
-    res.json({
+    return res.json({
       success: true,
       accessToken,
     });
@@ -138,7 +141,7 @@ router.post("/refresh", refreshLimiter, async (req, res) => {
       console.error("Refresh token error:", err.message);
     }
 
-    res.status(401).json({
+    return res.status(401).json({
       success: false,
       message: "Invalid or expired refresh token",
     });
@@ -150,7 +153,8 @@ router.post("/refresh", refreshLimiter, async (req, res) => {
  * /auth/logout:
  *   post:
  *     summary: Logout user
- *     tags: [Authentication]
+ *     tags:
+ *       - Authentication
  *     requestBody:
  *       required: true
  *       content:
@@ -162,6 +166,7 @@ router.post("/refresh", refreshLimiter, async (req, res) => {
  *             properties:
  *               refreshToken:
  *                 type: string
+ *                 example: your-refresh-token
  *     responses:
  *       200:
  *         description: Logout successful
@@ -181,7 +186,7 @@ router.post("/logout", async (req, res) => {
 
     await TokenService.removeRefreshToken(refreshToken);
 
-    res.json({
+    return res.json({
       success: true,
       message: "Logged out successfully",
     });
@@ -190,7 +195,7 @@ router.post("/logout", async (req, res) => {
       console.error("Logout error:", err.message);
     }
 
-    res.status(500).json({
+    return res.status(500).json({
       success: false,
       message: "Logout failed",
     });

@@ -1,5 +1,4 @@
 const swaggerJsDoc = require("swagger-jsdoc");
-const path = require("path");
 
 const options = {
   definition: {
@@ -9,6 +8,7 @@ const options = {
       version: "1.0.0",
       description: "PrimeBundle Backend API Documentation",
     },
+
     servers: [
       {
         url:
@@ -17,6 +17,7 @@ const options = {
             : "http://localhost:5000/api",
       },
     ],
+
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -26,6 +27,7 @@ const options = {
         },
       },
     },
+
     security: [
       {
         bearerAuth: [],

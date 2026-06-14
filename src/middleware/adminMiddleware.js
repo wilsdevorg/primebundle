@@ -17,8 +17,9 @@ const adminMiddleware = async (req, res, next) => {
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET, {
       algorithms: ["HS256"],
+      issuer: "primebundle-api",
+      audience: "primebundle-client",
     });
-
     const user = await User.findByPk(decoded.id);
 
     if (!user) {
@@ -39,6 +40,8 @@ const adminMiddleware = async (req, res, next) => {
 
     next();
   } catch (err) {
+    console.error("ADMIN AUTH ERROR:", err.message);
+
     return res.status(401).json({
       success: false,
       message: "Unauthorized",

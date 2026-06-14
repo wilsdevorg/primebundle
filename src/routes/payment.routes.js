@@ -7,8 +7,8 @@ const authMiddleware = require("../middleware/authMiddleware");
 /**
  * @swagger
  * tags:
- *   name: Payments
- *   description: Payment processing APIs
+ *   - name: Payments
+ *     description: Payment processing APIs
  */
 
 /**
@@ -16,7 +16,8 @@ const authMiddleware = require("../middleware/authMiddleware");
  * /payments/initialize:
  *   post:
  *     summary: Initialize a payment
- *     tags: [Payments]
+ *     tags:
+ *       - Payments
  *     security:
  *       - bearerAuth: []
  *     requestBody:
@@ -46,7 +47,8 @@ router.post("/initialize", authMiddleware, paymentController.initialize);
  * /payments/verify:
  *   post:
  *     summary: Verify a payment
- *     tags: [Payments]
+ *     tags:
+ *       - Payments
  *     security:
  *       - bearerAuth: []
  *     requestBody:

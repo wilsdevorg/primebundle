@@ -10,8 +10,8 @@ const { User, Order, Transaction } = require("../models");
 /**
  * @swagger
  * tags:
- *   name: Admin
- *   description: Admin management APIs
+ *   - name: Admin
+ *     description: Admin management APIs
  */
 
 /**
@@ -19,7 +19,8 @@ const { User, Order, Transaction } = require("../models");
  * /admin/users:
  *   get:
  *     summary: Get all users
- *     tags: [Admin]
+ *     tags:
+ *       - Admin
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -58,7 +59,8 @@ router.get("/users", adminMiddleware, async (req, res, next) => {
  * /admin/orders:
  *   get:
  *     summary: Get all orders
- *     tags: [Admin]
+ *     tags:
+ *       - Admin
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -97,7 +99,8 @@ router.get("/orders", adminMiddleware, async (req, res, next) => {
  * /admin/transactions:
  *   get:
  *     summary: Get all transactions
- *     tags: [Admin]
+ *     tags:
+ *       - Admin
  *     security:
  *       - bearerAuth: []
  *     responses:

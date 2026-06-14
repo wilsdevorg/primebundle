@@ -14,7 +14,10 @@ const verifySignature = (req) => {
     .update(req.rawBody || JSON.stringify(req.body))
     .digest("hex");
 
-  return hash === req.headers["x-paystack-signature"];
+  return crypto.timingSafeEqual(
+    Buffer.from(hash),
+    Buffer.from(req.headers["x-paystack-signature"] || ""),
+  );
 };
 
 exports.paystackWebhook = async (req, res) => {

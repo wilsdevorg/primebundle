@@ -7,8 +7,8 @@ const userController = require("../controllers/user.controller");
 /**
  * @swagger
  * tags:
- *   name: Users
- *   description: User management APIs
+ *   - name: Users
+ *     description: User management APIs
  */
 
 /**
@@ -16,7 +16,8 @@ const userController = require("../controllers/user.controller");
  * /users/stats:
  *   get:
  *     summary: Get users stats
- *     tags: [Users]
+ *     tags:
+ *       - Users
  *     security:
  *       - bearerAuth: []
  *     responses:

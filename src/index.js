@@ -78,6 +78,7 @@ app.use(
 // ====================
 // BASIC ROUTES
 // ====================
+
 app.get("/", (req, res) => {
   res.json({
     success: true,
@@ -92,6 +93,26 @@ app.get("/api/test", (req, res) => {
   });
 });
 
+// DEPLOYMENT TEST ROUTE
+app.get("/primebundle-check", (req, res) => {
+  res.json({
+    success: true,
+    message: "NEW DEPLOYMENT WORKING",
+    version: "2026-06-14",
+  });
+});
+
+// HEALTH CHECK ROUTE
+app.get("/health", (req, res) => {
+  res.status(200).json({
+    success: true,
+    status: "ok",
+    uptime: process.uptime(),
+    timestamp: Date.now(),
+    environment: process.env.NODE_ENV || "development",
+  });
+});
+
 // ====================
 // ROUTES
 // ====================
@@ -102,14 +123,24 @@ app.use("/api/plugbundle", plugbundleRoutes);
 app.use("/api", maintenanceCheck, routes);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// ====================i
+// ====================
+// 404 HANDLER
+// ====================
+app.use("*", (req, res) => {
+  console.log("404:", req.method, req.originalUrl);
+
+  res.status(404).json({
+    success: false,
+    route: req.originalUrl,
+    message: "Route not found",
+  });
+});
+
+// ====================
 // ERROR HANDLER
 // ====================
 app.use(errorHandler);
 
-// ====================
-// START SERVER
-// ====================
 // ====================
 // DB BOOTSTRAP
 // ====================
@@ -117,7 +148,6 @@ const start = async () => {
   try {
     console.log("\n⏳ Connecting to database...");
 
-    // timeout guard
     const timeout = setTimeout(() => {
       console.log("⚠️ DB connection still pending after 10s");
     }, 10000);
@@ -131,14 +161,17 @@ const start = async () => {
     clearTimeout(timeout);
 
     app.listen(PORT, () => {
-      console.log("\n🚀 Server running");
+      console.log("\n=================================");
+      console.log("🚀 SERVER STARTED");
       console.log(`🌍 Environment: ${process.env.NODE_ENV || "development"}`);
-      console.log(`📡 Base URL: http://localhost:${PORT}`);
-      console.log(`🧪 Test: http://localhost:${PORT}/api/test`);
-      console.log(`🔐 Auth: http://localhost:${PORT}/api/auth`);
-      console.log(`💳 Payments: http://localhost:${PORT}/api/payments`);
-      console.log(`🌐 Webhooks: http://localhost:${PORT}/api/webhooks`);
-      console.log("");
+      console.log(`📡 Port: ${PORT}`);
+      console.log(`🏥 Health: /health`);
+      console.log(`🧪 Test: /api/test`);
+      console.log(`🔍 Deploy Check: /primebundle-check`);
+      console.log(`🔐 Auth: /api/auth`);
+      console.log(`💳 Payments: /api/payments`);
+      console.log(`🌐 Webhooks: /api/webhooks`);
+      console.log("=================================\n");
     });
   } catch (error) {
     console.error("❌ Server failed to start");

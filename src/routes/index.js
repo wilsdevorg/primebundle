@@ -1,19 +1,15 @@
 const express = require("express");
-
 const router = express.Router();
 
 // ==============================
 // ROUTE IMPORTS
 // ==============================
 const authRoutes = require("./auth.routes");
-
 const userRoutes = require("./user.routes");
-
 const adminRoutes = require("./admin.routes");
-
 const walletRoutes = require("./wallet.routes");
-
 const orderRoutes = require("./order.routes");
+const paymentRoutes = require("./payment.routes"); // <-- ADD THIS
 
 // ==============================
 // HEALTH ROUTES
@@ -37,14 +33,11 @@ router.get("/test", (req, res) => {
 // REGISTER ROUTES
 // ==============================
 router.use("/auth", authRoutes);
-
 router.use("/users", userRoutes);
-
 router.use("/admin", adminRoutes);
-
 router.use("/wallet", walletRoutes);
-
 router.use("/orders", orderRoutes);
+router.use("/payments", paymentRoutes); // <-- ADD THIS
 
 // ==============================
 // SAFE ERROR HANDLER

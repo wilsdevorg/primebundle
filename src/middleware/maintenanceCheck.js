@@ -1,17 +1,27 @@
 const { SystemSetting } = require("../models");
 
+const ADMIN_PREFIX = "/api/admin/";
+
 const maintenanceCheck = async (req, res, next) => {
   try {
-    // Allow admin routes to pass through so admin can turn off maintenance mode
-    if (req.path.startsWith("/admin")) {
+    if (req.originalUrl.startsWith(ADMIN_PREFIX)) {
       return next();
     }
 
     const setting = await SystemSetting.findOne({
-      where: { key: "maintenanceMode" },
+      where: {
+        key: "maintenanceMode",
+      },
     });
 
-    if (setting && setting.value === true) {
+    const maintenanceEnabled =
+      setting &&
+      (setting.value === true ||
+        setting.value === "true" ||
+        setting.value === 1 ||
+        setting.value === "1");
+
+    if (maintenanceEnabled) {
       return res.status(503).json({
         success: false,
         message:
@@ -22,7 +32,10 @@ const maintenanceCheck = async (req, res, next) => {
 
     next();
   } catch (error) {
-    console.error("Maintenance check error:", error);
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Maintenance check error:", error);
+    }
+
     next();
   }
 };
